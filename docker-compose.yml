@@ -1,0 +1,43 @@
+services:
+  # The Ollama service
+  ollama:
+    image: ollama/ollama:latest
+    container_name: rag_ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Model downloader service (ensures models are pulled)
+  ollama-model-puller:
+    image: curlimages/curl
+    container_name: rag_model_puller
+    depends_on:
+      ollama:
+        condition: service_healthy
+    entrypoint: /bin/sh
+    command: >
+      -c "echo 'Downloading llama3.2...'; curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"llama3.2\"}'; echo 'Downloading nomic-embed-text...'; curl -X POST http://ollama:11434/api/pull -d '{\"name\": \"nomic-embed-text\"}'; echo 'Models downloaded!'"
+
+  # Your application service
+  rag-app:
+    build: .
+    container_name: rag_app
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    depends_on:
+      ollama-model-puller:
+        condition: service_completed_successfully
+    volumes:
+      - ./docs:/app/docs
+      - ./chroma_data:/app/chroma_data # Persist vector DB
+
+volumes:
+  ollama_data:
