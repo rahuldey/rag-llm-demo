@@ -1,6 +1,6 @@
 # RAG LLM Demo
 
-A local Retrieval-Augmented Generation API. Drop PDFs into a folder, start the server, and ask questions — answers are grounded in your documents. No third-party APIs, everything runs on your machine.
+A local Retrieval-Augmented Generation API. Drop documents (PDF, TXT, PPT, PPTX) into a folder, start the server, and ask questions — answers are grounded in your documents. No third-party APIs, everything runs on your machine.
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ A local Retrieval-Augmented Generation API. Drop PDFs into a folder, start the s
 
 ## Running
 
-1. Place your PDF files in the `docs/` directory.
+1. Place your document files (PDF, TXT, PPT, PPTX) in the `docs/` directory.
 
 2. Start the server:
 
@@ -38,7 +38,7 @@ A local Retrieval-Augmented Generation API. Drop PDFs into a folder, start the s
    ```
 
 3. The server starts at `http://localhost:8000`. On startup it automatically:
-   - Scans `docs/` for PDFs
+   - Scans `docs/` for supported documents
    - Skips files that have already been ingested (checked via vector database metadata)
    - Extracts and chunks the text from new files
    - Embeds the chunks and stores them in the vector database
@@ -53,7 +53,7 @@ You can also run the entire stack (App + Ollama) using Docker Compose.
 
 1. **Prerequisites**: Ensure you have Docker and Docker Compose installed.
 
-2. **Prepare Documents**: Place your PDF files in the `docs/` directory.
+2. **Prepare Documents**: Place your document files (PDF, TXT, PPT, PPTX) in the `docs/` directory.
 
 3. **Start the Stack**:
 
@@ -78,10 +78,10 @@ You can also run the entire stack (App + Ollama) using Docker Compose.
 
 ```
 Server starts
-  → Scans docs/ for PDF files
+  → Scans docs/ for supported document files
   → For each file, checks if it has already been ingested (metadata lookup)
   → Skips already-ingested files
-  → Extracts text from new PDFs
+  → Extracts text from new documents
   → Splits text into overlapping chunks
   → Embeds each chunk into a vector (concurrently across files)
   → Stores vectors in the local vector database
