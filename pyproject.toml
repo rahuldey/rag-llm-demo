@@ -14,6 +14,7 @@ dependencies = [
     "langchain-chroma>=0.2.0",
     "pypdf>=5.0.0",
     "jinja2>=3.1.6",
+    "python-pptx>=1.0.2",
 ]
 
 [build-system]

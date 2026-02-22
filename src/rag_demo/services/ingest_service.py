@@ -34,15 +34,20 @@ class IngestService:
         if not directory.is_dir():
             raise FileNotFoundError(f"Docs directory not found: {directory}")
 
-        pdf_files = sorted(directory.glob("*.pdf"))
-        if not pdf_files:
-            logger.warning("No PDF files found in %s", directory)
+        supported_extensions = {".pdf", ".txt", ".ppt", ".pptx"}
+        files_to_ingest = [
+            f for f in sorted(directory.iterdir())
+            if f.is_file() and f.suffix.lower() in supported_extensions
+        ]
+
+        if not files_to_ingest:
+            logger.warning("No supported files (pdf, txt, ppt, pptx) found in %s", directory)
             return 0
 
         loop = asyncio.get_running_loop()
         tasks = [
-            loop.run_in_executor(None, self.ingest_file, pdf_path)
-            for pdf_path in pdf_files
+            loop.run_in_executor(None, self.ingest_file, file_path)
+            for file_path in files_to_ingest
         ]
         results = await asyncio.gather(*tasks)
         total_chunks = sum(results)
@@ -50,6 +55,6 @@ class IngestService:
         logger.info(
             "Ingestion complete: %d chunks from %d files",
             total_chunks,
-            len(pdf_files),
+            len(files_to_ingest),
         )
         return total_chunks

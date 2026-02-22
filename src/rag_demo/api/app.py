@@ -7,7 +7,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 
-from rag_demo.adapters.document.pdf_loader import PdfDocumentLoader
+from rag_demo.adapters.document.generic_loader import GenericDocumentLoader
 from rag_demo.adapters.embeddings.ollama_embeddings import OllamaEmbeddingAdapter
 from rag_demo.adapters.llm.ollama_llm import OllamaLLMAdapter
 from rag_demo.adapters.vectorstore.chroma_store import ChromaVectorStoreAdapter
@@ -70,7 +70,7 @@ async def _lifespan(app: FastAPI):
         embedding_port=embedding_adapter,
     )
 
-    document_loader = PdfDocumentLoader(
+    document_loader = GenericDocumentLoader(
         chunk_size=settings.chunk_size,
         chunk_overlap=settings.chunk_overlap,
     )
